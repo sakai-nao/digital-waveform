@@ -17,7 +17,7 @@ canvas {
     border: 2px solid #333;
     display: block;
     margin: 20px auto;
-    width: 100%;
+    width: calc(100% + 5cm);
     max-width: 800px;
     height: auto;
     background: white;
