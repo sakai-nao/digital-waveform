@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音のデジタル化</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>音のデジタル化</h2>
+        <div class="slider-container">
+            <input type="range" id="frequencySlider" min="25" max="2000" value="25" step="10">
+        </div>
+        <p>周波数: <span id="freqValue">25</span> Hz</p>
+        <canvas id="waveCanvas"></canvas>
+        <button id="playButton">🔊 再生</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
