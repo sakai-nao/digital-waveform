@@ -1,79 +1,70 @@
+const canvas = document.getElementById('waveCanvas');
+const ctx = canvas.getContext('2d');
+const slider = document.getElementById('frequencySlider');
+const freqDisplay = document.getElementById('freqValue');
+const playButton = document.getElementById('playButton');
 
-* {
-    box-sizing: border-box;
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    padding: 0;
+function resizeCanvas() {
+    canvas.width = window.innerWidth * 0.9;
+    canvas.height = 300;
+    drawWaveform(slider.value);
 }
-body {
-    text-align: center;
-    background-color: #f4f4f4;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    padding: 20px;
+
+function drawWaveform(frequency) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let amplitude = 50;
+    let sampleRate = 100;
+    let offsetAnalog = 100;
+    let offsetDigital = 220;
+    ctx.beginPath();
+    ctx.strokeStyle = '#007bff';
+    ctx.lineWidth = 2;
+    for (let x = 0; x < canvas.width; x++) {
+        let angle = (x / sampleRate) * frequency * 2 * Math.PI / 100;
+        let y = Math.sin(angle) * amplitude + offsetAnalog;
+        if (x === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    }
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = '#FF5733';
+    let prevX = 0;
+    let prevY = Math.sin(0) < 0 ? offsetDigital - amplitude : offsetDigital + amplitude;
+    for (let x = 0; x < canvas.width; x += sampleRate / frequency / 2) {
+        let angle = (x / sampleRate) * frequency * 2 * Math.PI / 100;
+        let isHigh = Math.sin(angle) < 0;
+        let y = isHigh ? offsetDigital - amplitude : offsetDigital + amplitude;
+        ctx.lineTo(prevX, prevY);
+        ctx.lineTo(prevX, y);
+        ctx.lineTo(x, y);
+        prevX = x;
+        prevY = y;
+    }
+    ctx.stroke();
 }
-.container {
-    max-width: 900px;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
+
+slider.addEventListener('input', () => {
+    const freq = slider.value;
+    freqDisplay.textContent = `${freq} Hz`;
+    drawWaveform(freq);
+});
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function playSound(frequency) {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioCtx.createOscillator();
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+    oscillator.connect(audioCtx.destination);
+    oscillator.start();
+    setTimeout(() => oscillator.stop(), 2000);
 }
-canvas {
-    border: 2px solid #007bff;
-    border-radius: 10px;
-    background-color: white;
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 20px;
-}
-.slider-container {
-    width: 90%;
-    max-width: 600px;
-    margin: 20px auto;
-}
-.slider {
-    width: 100%;
-    -webkit-appearance: none;
-    appearance: none;
-    height: 10px;
-    border-radius: 5px;
-    background: #ddd;
-    outline: none;
-    transition: 0.2s;
-}
-.slider:hover {
-    opacity: 1;
-}
-.slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #007bff;
-    cursor: pointer;
-}
-.slider-value {
-    font-size: 16px;
-    font-weight: bold;
-    color: #007bff;
-    margin-top: 10px;
-}
-button {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 18px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-button:hover {
-    background: #0056b3;
-}
+
+playButton.addEventListener('click', () => {
+    playSound(slider.value);
+});
