@@ -4,15 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>音のデジタル化</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h2>音のデジタル化</h2>
         <div class="slider-container">
-            <input type="range" id="frequencySlider" min="25" max="2000" value="25" step="10">
+            <label for="frequencySlider">周波数</label>
+            <input type="range" id="frequencySlider" min="25" max="2000" value="25" step="10" class="slider">
+            <span id="freqValue" class="slider-value">25 Hz</span>
         </div>
-        <p>周波数: <span id="freqValue">25</span> Hz</p>
         <canvas id="waveCanvas"></canvas>
         <button id="playButton">🔊 再生</button>
     </div>
